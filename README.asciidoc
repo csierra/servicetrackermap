@@ -6,7 +6,9 @@ This package provides a Service Tracker with a map interface. This should be use
 [source,java]
 .singleValueMapExample.java
 ----
-ServiceTrackerMap<String, Service> serviceTrackerMap = ServiceTrackerMapFactory.singleValueMap(bundleContext, Service.class, "indexProperty");
+ServiceTrackerMap<String, Service> serviceTrackerMap = 
+    ServiceTrackerMapFactory.singleValueMap(
+        bundleContext, Service.class, "indexProperty");
 
 ----
 
@@ -19,7 +21,9 @@ If we, on the other hand, used a multi value map we would obtain a List listing 
 [source,java]
 .multiValueMapExample.java
 ----
-ServiceTrackerMap<String, List<Service>> serviceTrackerMap = ServiceTrackerMapFactory.multiValueMap(bundleContext, Service.class, "indexProperty");
+ServiceTrackerMap<String, List<Service>> serviceTrackerMap = 
+    ServiceTrackerMapFactory.multiValueMap(
+        bundleContext, Service.class, "indexProperty");
 
 ----
 
@@ -31,16 +35,21 @@ Should you need to customize the keys under which the services are going to be s
 .serviceReferenceMapperExample.java
 ----
 ServiceTrackerMap<String, List<Service>> serviceTrackerMap =
-    ServiceTrackerMapFactory.multiValueMap(bundleContext, Service.class, filterString,
+    ServiceTrackerMapFactory.multiValueMap
+        (bundleContext, Service.class, filterString,
         new ServiceReferenceMapper<String, Service>() {
 
             @Override
-            public void map(ServiceReference<Service> serviceReference, Emitter<String> emitter) {
-               emitter.emit((String)serviceReference.getProperty("aProperty") + "-calculated");
+            public void map(
+                ServiceReference<Service> serviceReference, 
+                Emitter<String> emitter) {
+                     emitter.emit(
+                        (String)serviceReference.getProperty(
+                            "aProperty") + "-calculated");
 
-                //You can store the service under any number of keys just calling emitter.emit as needed
+                //You can store the service under any number of keys 
+                //just calling emitter.emit as needed
             }
-
         });
 ----
 
