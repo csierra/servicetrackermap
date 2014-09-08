@@ -1,4 +1,55 @@
 Service Tracker Map
 ===================
 
-This package provides a Service Tracker with a map interface. This should be useful when you need to track services of the same class but you need to aggregate them using some other criteria as an index, such as service properties or other data. This service tracker allows to track only one service per key or a list of them. In each case preserving the "service.ranking" semantics expected from a Service Tracker. 
+This package provides a Service Tracker with a map interface. This should be useful when you need to track services of the same class but you need to aggregate them using some other criteria as an index, such as service properties or other data. This service tracker allows to track only one service per key or a list of them. In each case preserving the "service.ranking" semantics expected from a Service Tracker.
+
+[source,java]
+.singleValueMapExample.java
+----
+ServiceTrackerMap<String, Service> serviceTrackerMap = ServiceTrackerMapFactory.singleValueMap(bundleContext, Service.class, "indexProperty");
+
+----
+
+The code above will create a ServiceTrackerMap that will track `Service.class` services that carry a property `indexProperty`. Then the value of the `indexProperty` will be used as the key for the service in the map.
+
+In the event that more that one service clashes under the same key the map will use a comparator to decide which one to return. By default the returned service will be the one with the highest `service.ranking`.
+
+If we, on the other hand, used a multi value map we would obtain a List listing all the registered services under the same key.
+
+[source,java]
+.multiValueMapExample.java
+----
+ServiceTrackerMap<String, List<Service>> serviceTrackerMap = ServiceTrackerMapFactory.multiValueMap(bundleContext, Service.class, "indexProperty");
+
+----
+
+=== Customizing keys
+
+Should you need to customize the keys under which the services are going to be stored, you can provide the map with a `ServiceReferenceMapper`.
+
+[source,java]
+.serviceReferenceMapperExample.java
+----
+ServiceTrackerMap<String, List<Service>> serviceTrackerMap =
+    ServiceTrackerMapFactory.multiValueMap(bundleContext, Service.class, filterString,
+        new ServiceReferenceMapper<String, Service>() {
+
+            @Override
+            public void map(ServiceReference<Service> serviceReference, Emitter<String> emitter) {
+               emitter.emit((String)serviceReference.getProperty("aProperty") + "-calculated");
+
+                //You can store the service under any number of keys just calling emitter.emit as needed
+            }
+
+        });
+----
+
+if the mapper does not provide any keys for a service then it won't be tracked at all.
+
+=== Customizing tracked services
+
+You can customize the services that are going to be stored providing a ServiceTrackerCustomizer.
+
+=== Tuning precedence
+
+You can provide the map with your own Comparator to affect the behaviour of the map.
