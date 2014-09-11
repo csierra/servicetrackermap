@@ -15,6 +15,7 @@
 package com.liferay.osgi.servicetrackermap;
 
 import java.io.Closeable;
+import java.util.Set;
 
 /**
  * @author Carlos Sierra Andrés
@@ -23,6 +24,10 @@ public interface ServiceTrackerMap<K, R> extends Closeable {
 
 	@Override
 	public void close();
+
+	public boolean containsKey(K key);
+
+	public Set<K> keySet();
 
 	public R getService(K key);
 

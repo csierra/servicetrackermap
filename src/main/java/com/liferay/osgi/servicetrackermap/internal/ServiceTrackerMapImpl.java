@@ -26,6 +26,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,7 +37,7 @@ public class ServiceTrackerMapImpl<K, SR, TS, R>
 	implements ServiceTrackerMap<K, R> {
 
 	public ServiceTrackerMapImpl(
-            BundleContext bundleContext, Class<SR> clazz, String filterString,
+			BundleContext bundleContext, Class<SR> clazz, String filterString,
             ServiceReferenceMapper<K, SR> serviceReferenceMapper,
             ServiceTrackerCustomizer<SR, TS> serviceTrackerCustomizer,
             ServiceTrackerBucketFactory<SR, TS, R> serviceTrackerMapBucketFactory)
@@ -60,6 +62,16 @@ public class ServiceTrackerMapImpl<K, SR, TS, R>
 	@Override
 	public void close() {
 		_serviceTracker.close();
+	}
+
+	@Override
+	public boolean containsKey(K key) {
+		return _serviceTrackerBuckets.containsKey(key);
+	}
+
+	@Override
+	public Set<K> keySet() {
+		return Collections.unmodifiableSet(_serviceTrackerBuckets.keySet());
 	}
 
 	@Override
